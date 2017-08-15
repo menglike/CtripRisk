@@ -8,12 +8,14 @@ class CtripRisk
 
         //post请求
         public function ctrip_risk($url,$jsonStr)
-        {
+        {       $head[] = 'Content-Type:application/json';
                 $ch  = curl_init($url);
-                $ch  = curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-                $ch  = curl_setopt($ch,CURLOPT_POST,1);
-                $ch  = curl_setopt($ch,CURLOPT_POSTFIELDS,$jsonStr);
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+                curl_setopt($ch,CURLOPT_POST,1);
+                curl_setopt($ch,CURLOPT_POSTFIELDS,$jsonStr);
+                curl_setopt($ch,CURLOPT_HTTPHEADER,$head);
                 $out = curl_exec($ch);
+                curl_close($ch);
                 return json_decode($out,true);
         }
 
@@ -29,7 +31,7 @@ class CtripRisk
         {
                 $origin    = '{"type":"IP","value":"'.$ip.'","scene":"login","token":"'.self::$token.'"}';
                 $signature = base64_encode(hash_hmac("sha1", $origin, self::$secret, true));  //加密签名
-                return     '{"type":"IP","value":"'.$ip.'","scene":"login","token":"'.self::$token.'","sign":"'.$signature.'"}'
+                return     '{"type":"IP","value":"'.$ip.'","scene":"login","token":"'.self::$token.'","sign":"'.$signature.'"}';
         }
 }
             
