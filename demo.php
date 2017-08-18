@@ -20,23 +20,25 @@ class CtripRisk
         }
 
         //获取到签名
-        public function getIpRiskRes($ip)
+        public function getIpRiskRes($ip,$type='IP')
         {
-                $jsonStr = $this->getJsonStr($ip);
+                $jsonStr = $this->getJsonStr($ip,$type);
                 $this->ctrip_risk(self::$url,$jsonStr);
         }
 
         //使用加密算法生成加密签名
-        public function getJsonStr($ip)
+        //type : IP | Mobile
+        public function getJsonStr($ip,$type)
         {
-                $origin    = '{"type":"IP","value":"'.$ip.'","scene":"login","token":"'.self::$token.'"}';
+                $origin    = '{"type":"'.$type.'","value":"'.$ip.'","scene":"login","token":"'.self::$token.'"}';
                 $signature = base64_encode(hash_hmac("sha1", $origin, self::$secret, true));  //加密签名
-                return     '{"type":"IP","value":"'.$ip.'","scene":"login","token":"'.self::$token.'","sign":"'.$signature.'"}';
+                return     '{"type":"'.$type.'","value":"'.$ip.'","scene":"login","token":"'.self::$token.'","sign":"'.$signature.'"}';
         }
 }
             
 $obj = new CtripRisk();
 $ip  = $_GET['ip']; 
+//$phone = $_GET['phone'];
 $res = $obj->getIpRiskRes($ip);
 var_dump($res); 
 
